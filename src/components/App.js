@@ -9,15 +9,15 @@ export default function App() {
 
   const [range, setRange] = useState({
     start: 0,
-    end: 10,
+    end: 9, // ✅ exactly 10 items
   });
 
   const handleScroll = () => {
     const scrollTop = scrollRef.current.scrollTop;
 
     const startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
-    const visibleCount = Math.ceil(CONTAINER_HEIGHT / ITEM_HEIGHT);
-    const endIndex = startIndex + visibleCount;
+    const visibleCount = Math.floor(CONTAINER_HEIGHT / ITEM_HEIGHT);
+    const endIndex = Math.min(startIndex + visibleCount - 1, TOTAL_ITEMS - 1);
 
     setRange({
       start: startIndex,
@@ -28,10 +28,11 @@ export default function App() {
   const visibleItems = [];
   for (let i = range.start; i <= range.end; i++) {
     visibleItems.push(
-      <div
+      <h2
         key={i}
         style={{
           height: `${ITEM_HEIGHT}px`,
+          margin: 0,
           border: "1px solid #ccc",
           display: "flex",
           alignItems: "center",
@@ -39,7 +40,7 @@ export default function App() {
         }}
       >
         Item {i}
-      </div>
+      </h2>
     );
   }
 
@@ -49,21 +50,19 @@ export default function App() {
       onScroll={handleScroll}
       style={{
         height: "500px",
-        overflowY: "auto",
+        overflow: "auto", // ✅ important fix
         border: "2px solid black",
         width: "300px",
         margin: "20px auto",
         position: "relative",
       }}
     >
-      {/* Full height container */}
       <div
         style={{
           height: `${TOTAL_ITEMS * ITEM_HEIGHT}px`,
           position: "relative",
         }}
       >
-        {/* Visible items */}
         <div
           style={{
             position: "absolute",
